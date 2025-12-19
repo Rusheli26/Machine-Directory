@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Machine Directory — Single File App</title>
+<style>
+  /* Global */
+  :root{--blue:#3498db;--dark:#2c3e50}
+  body{font-family:Arial, sans-serif;background:#f4f4f4;margin:0;padding:0;color:#222}
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+ /* Pages wrapper */
+  .page{display:none;padding:24px}
+  .page.active{display:block}
+
+/* Header */
+  header{background:var(--dark);color:#fff;padding:30px 20px;position:relative;display:flex;align-items:center;justify-content:center}
+  header h1{margin:0;font-size:40px}
+  header .logo{position:absolute;left:18px;top:8px;width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid rgba(255,255,255,.08)}
+
+  /* Home */
+ .home-intro {
+  max-width: 1000px;
+  margin: -6px auto;
+  text-align: center;
+  padding: 190px;
+  margin-top: -16px;
+
+  /* replace white background */
+  background-image: url("https://images.fineartamerica.com/images/artworkimages/mediumlarge/3/1-semi-cyborg-generative-ai-illustration-miroslav-nemecek.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.25);
+  color:green; /* text visible */
+}
+
+  
+
+footer{background:var(--dark);color:#fff;padding:30px;text-align:center;margin-top:-10px}
+ 
+
+  /* Grid page */
+  .controls{max-width:1100px;margin:18px auto;display:flex;align-items:center;gap:12px}
+  .back-btn{display:inline-block;padding:10px 14px;background:var(--blue);color:#fff;border-radius:8px;text-decoration:none}
+  .grid{max-width:1100px;margin:12px auto 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;padding:6px}
+  .machine{background:#fff;border-radius:10px;padding:12px;box-shadow:0 6px 18px rgba(0,0,0,.06);cursor:pointer;transition:transform .14s}
+  .machine:hover{transform:translateY(-6px)}
+  .machine img{width:100%;height:250px;object-fit:cover;border-radius:6px}
+  .machine h3{font-size:20px;margin:8px 0 0}
+
+  /* Detail page (matches sample design) */
+  .container{max-width:1100px;margin:26px auto;background:#fff;padding:25px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.08)}
+  .back-link{display:inline-block;margin-bottom:12px;color:#fff;background:var(--blue);padding:8px 12px;border-radius:8px;text-decoration:none;cursor:pointer}
+  .machine-header-img{display:block;margin:0 auto 20px;max-width:420px;border-radius:10px;object-fit:cover}
+  .grid-2col{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:10px}
+  .box{background:#fafafa;padding:18px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.05);text-align:center;font-weight:700}
+  .sample-section{margin-top:26px}
+  .sample-title{font-size:20px;font-weight:700;margin-bottom:10px}
+  .sample-img-row{display:flex;gap:20px;margin-bottom:18px;flex-wrap:wrap}
+  .sample-img-row img{width:48%;border-radius:10px;border:1px solid #ccc;object-fit:cover}
+  .machine-sample-img{display:block;margin:10px auto;max-width:300px;border-radius:10px;object-fit:cover}
+  .video-section{margin-top:24px;background:#f8f8f8;padding:18px;border-radius:10px}
+  .video-section ul{padding-left:20px;margin:0}
+  .video-section li{margin:6px 0}
+  .spec-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
+  .spec-card{background:#fafafa;padding:14px;border-radius:8px;text-align:center;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+  .notes{margin-top:15px;padding:10px;background:#f1f1f1;border:1px solid #ccc;border-radius:6px}
+  @media(max-width:720px){
+    .sample-img-row img{width:100%}
+    .machine-header-img{max-width:320px}
+  }
+  
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Machine Directory</h1>
+  <img src="data:image/webp;base64,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"  alt="Logo" width="200"; height:"200"; style="position: absolute; left:40px;">
+</header>
+
+<!-- HOME PAGE -->
+<section id="homePage" class="page active">
+  <div class="home-intro">
+    <h2 style="margin-top: -30px;">Welcome to the Machine Directory</h2>
+    <p style="margin-top: -10px;">Browse different machines, view their specifications and examples.</p>
+
+
+
+ <button onclick="goToMachines()" 
+        style="padding:14px 66px;
+               background: linear-gradient(135deg, #6a11cb, #2575fc);
+               color: white;
+               border: none;
+               border-radius: 12px;
+               font-size: 18px;
+               letter-spacing: 0.5px;
+               cursor: pointer;
+               box-shadow: 0 4px 10px rgba(0,0,0,0.20);
+               transition: 0.25s;">
+  CLICK ME
+</button>
+</div>
+  </div>
+</section>
+
+<!-- GRID PAGE -->
+<section id="machinePage" class="page">
+  <div class="controls" style="justify-content:space-between;max-width:1100px;margin:18px auto;">
+    <a class="back-btn" onclick="goHome()">← Home</a>
+    <div><strong>16 Machines</strong></div>
+  </div>
+
+  <div id="machineGrid" class="grid" aria-live="polite"></div>
+</section>
+
+<!-- DETAIL PAGE -->
+<section id="detailPage" class="page">
+  <div class="container">
+    <a class="back-link" onclick="goToMachines()">← Back to Directory</a>
+    <h1 id="detailTitle">Machine Title</h1>
+    <img id="detailMainImg" class="machine-header-img" src="" alt="Machine image">
+
+    <div class="grid-2col" id="specBoxes">
+      <!-- dynamically filled spec boxes -->
+    </div>
+
+    <div class="sample-section">
+      <div class="sample-title">Front and Back Stitches View</div>
+      <div class="sample-img-row">
+        <img id="frontSample1" src="" alt="Front Sample 1">
+        <img id="frontSample2" src="" alt="Front Sample 2">
+      </div>
+    </div>
+
+    <div class="sample-section">
+      <div class="sample-title">Top and Bottom Stitches Drawing </div>
+      <div class="sample-img-row">
+        <img id="backSample1" src="" alt="Back Sample 1">
+        <img id="backSample2" src="" alt="Back Sample 2">
+      </div>
+      <p style="margin-top:8px;"><strong>Machine Image:</strong></p>
+      <img id="backMachineImg" class="machine-sample-img" src="" alt="Back machine">
+    </div>
+
+    <div class="video-section">
+      <h2>Examples & Videos</h2>
+      <ul id="videoList"></ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © 2025 Machine Directory | Developed by Rusheli Silva - Intern Industrial Engineer
+</footer>
+
+<script>
+/* ---- MACHINE DATA (16 items) ----
+   Using the data you posted earlier (kept URLs/specs). Placeholders left as-is.
+*/
+const machines = [
+  { id:1, name:"SINGLE NEEDLE - Lock Stitch", img:"https://murthysewingmachines.com/wp-content/uploads/2023/09/Juki-DDL-8100-EB-Single-Needle-Lockstitch-Sewing-Machine-Murthy-Sewing-Machines-Chennai.webp", type:"ISO 301", spi:"12-14", needle:1, thread:2, bobbin:1, looper:0, cmThread:"2cm", sampleFront1:"https://fucen-sewing.com/wp-content/uploads/2024/06/STITCH-SAMPLE.jpg", sampleFront2:"https://th.bing.com/th/id/OIP.eL1OUpv2LlC4gW16pLDcPgHaEx?o=7&cb=12rm=3&rs=1&pid=ImgDetMain&o=7&rm=3", sampleBack1:"yyyyy", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://sunnysewingcenter.com/wp-content/uploads/2021/10/8100_1.jpg", rpm:"4300", videos:[
+      {label:"Center front attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EUGuOeRyWyFCuH2s7P6ucKMBTM7qRbqGnDv7bORq_MIy3A?e=TYFr60"},
+      {label:"Cup attach to body", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EStQd46n42BIhR5ZM9VObjgBgNzNzwzqO7_JWsCgUjVeFQ?e=avwclw"},
+      {label:"Pocket Attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/ER3dd_D74UxHjVHV6fqWMT8Bb5ePOhpWXGDUjdjlVYN0Xw?e=2EoKCz"},
+{label:"West band run attach Attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EXwSxcPQl2hDnnuKMAIGA2gBfcOgsO9g4GcnZ41R75NI2A?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=b00fRr"},
+      {label:"Welt pocket attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EasIbxPmQPBKnf8bxI1qLqgBhh2hdTvH7YFJy9SCI0ZERA?e=8NGKzE"}
+    ] },
+
+  { id:2, name:"PULL OUT", img:"https://tse4.mm.bing.net/th/id/OIP.B-qpN54Oub70kq8N1dMXNgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3", type:"ISO 503", spi:"28-30", needle:1, thread:2, bobbin:0, looper:1, cmThread:"", sampleFront1:"https://th.bing.com/th/id/R.e4fc45fa249d5670af9f42abfaa72556?rik=%2fx%2fJNPd35EsheA&riu=http%3a%2f%2fmerrow-media.s3.amazonaws.com%2fapplications%2ftechnicalbaselayer_stitch_highres1.jpg&ehk=LkDHK2qvh5GnILQV5H2XLKSmcMdy%2ffmYvy%2fF5DUuRaw%3d&risl=&pid=ImgRaw&r=0", sampleFront2:"https://via.placeholder.com/600x400?text=Front+2", sampleBack1:"https://via.placeholder.com/120x80?text=Back+2", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://i.postimg.cc/9MnMZcdp/pullout.jpg", rpm:"5100", videos:[
+    
+{label:"Bottom band attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EWW-BrcwyhdPo6vm8sTQ4yUB9-vE_COn79u5pSbng6cplw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=6HvfMD"}
+    ] },
+
+  { id:3, name:"4 TREAD OVERLOCK ", img:"https://th.bing.com/th/id/R.8d5a3e4085caef088a6e32a9a40507e0?rik=U8RmBhrudRBVLA&pid=ImgRaw&r=0", type:"", spi:"14-16", needle:2, thread:4, bobbin:0, looper:2, cmThread:"cm", sampleFront1:"https://i.ytimg.com/vi/Erz2NkiLX0Q/maxresdefault.jpg", sampleFront2:"https://weallsew.com/wp-content/uploads/sites/4/2020/05/BL-0026_2020-05_PBOS_Balanced_stitch_front-1200x365-600x183@2x.png", sampleBack1:"yyyy", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://i.postimg.cc/9M7MdvJd/4trd-olk.jpg", rpm:"5100", 
+
+videos:[
+      {label:"Back rise attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EdKoU8TuF31Bk-BAunQNFrQBSAIqlGPTAYM1hP_dVO7X_Q?e=dlOSeb"},
+
+{label:"Back wing seam attach ", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/ET_TF_oV4ZJOqtYB-hb5hoIBaxQocEFVjvxzHwX83GZXJg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=wPcgku "},
+
+{label:"Pant side seam attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/ERKvYoYoINxFufLnpp4XLxYBwLHBYPJrRgJhHqaCeqancA?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=XpOpDe "},
+
+{label:"Back front attach ", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EfYpzvMmmVZKgi2UpIWvB1MBHv6mp61hj85fvlTRF_gg9Q?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=VrxW8e"}
+
+ ] },
+
+  { id:4, name:"3 TREAD OVERLOCK ", img:"https://th.bing.com/th/id/OIP.0Eszx3iLp2e7jlViO5el6gHaHa?o=7rm=3&rs=1&pid=ImgDetMain&o=7&rm=3", type:"ISO 504", spi:"14-16", needle:1, thread:3, bobbin:0, looper:2, cmThread:"6cm", sampleFront1:"https://i.ytimg.com/vi/BK7TtaooqQE/maxresdefault.jpg", sampleFront2:"https://weallsew.com/wp-content/uploads/sites/4/2020/04/Overlockers_for_Beginners_04_three_thread_overlock_WeAllSew_Blog_1200x800px.jpg", sampleBack1:"yyy", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://i.postimg.cc/m2Q9fF3w/3trd-olk.jpg", rpm:"5100", 
+videos:[
+      {label:"Back panel back rise", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/Eeka7LcsnrdLlii905GOW_8BaeOdXX5YDQTWo3BtHtoZ0A?e=vVqeqH"},
+{label:"Back wing attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/Ebmo1AN3kcBGoHWA7E3_5eEBq5qASMK9e8kHZvk4IhPaxQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=b3qp32"},
+
+{label:"Boxer weast band", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EcVOWM0DVZ5IoxNaG4f3tBABAPvVkJyzU36eYI1982COXw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=gzvoa1"},
+
+{label:"Pant leg open", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EcG_IRfx06NOpjN5bGw4Ac4BdsUYPOX9Yba0yEvjnLBLsw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=tPlgIY"}
+    ] },
+
+  { id:5, name:"ZIG ZAG", img:"https://image.made-in-china.com/2f0j00BovknChFMEqD/Sz-20u-A2-Direct-Drive-Industrial-Zig-Zag-Sewing-Machine-with-190-Patterns.jpg", type:"ISO 304", spi:"12,14", needle:1, thread:2, bobbin:1, looper:0, cmThread:"2.7cm", sampleFront1:"https://images.squarespace-cdn.com/content/v1/5715d48ef8baf36927c4baec/1461329699534-TKS7SGM0NL5ER7PMDDST/sparrow15-04.png", sampleFront2:"https://tse4.mm.bing.net/th/id/OIP.WOknw42_NsZbDw6ZjU2mnwHaEK?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3", sampleBack1:"https://i.postimg.cc/Dz07vtbx/Screenshot-2025-11-21-100236.png", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://i.postimg.cc/sgdJ5rKR/zig-zag.jpg", rpm:"4000", 
+videos:[
+      {label:"Front Stitch Demo", url:"https://www.youtube.com/watch?v=VIDEO1"},
+
+{label:"Front Stitch Demo", url:"https://www.youtube.com/watch?v=VIDEO1"},
+
+{label:"Front Stitch Demo", url:"https://www.youtube.com/watch?v=VIDEO1"},
+
+{label:"Front Stitch Demo", url:"https://www.youtube.com/watch?v=VIDEO1"},
+
+{label:"Front Stitch Demo", url:"https://www.youtube.com/watch?v=VIDEO1"},
+
+] },
+
+  { id:6, name:"BARTACK", img:"https://tse2.mm.bing.net/th/id/OIP.cYTD21kj2i4EwFQRBL42tQHaHa?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3", type:"-", spi:"-", needle:1, thread:2, bobbin:1, looper:0, cmThread:"1cm = 5 threads", sampleFront1:"https://tse3.mm.bing.net/th/id/OIP.Sqlg8Jgi2uzgJuoCny1PnQHaFX?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3", sampleFront2:"https://tse2.mm.bing.net/th/id/OIP.3tZX6I6npYcVsy20aQtPkQHaFj?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3", sampleBack1:"yyy", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://i.postimg.cc/NFBN8wQY/bartag.jpg", rpm:"2100", videos:[
+      {label:"Apex bartack", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/ET9eohCSeo5EgzT8S8qVvCAB8_LVuTkNzVflpr0YnXAW8w?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=tYCRCn"},
+
+      {label:"Double apex bartack", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EUbD6noNIBZHqkKsqANSBeoBF-0cJcelbtz0b90WHTtnCA?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=YHO0lU"},
+
+      {label:"Loop attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EXMKw0_DKeJEom54FJW_CS0BFvkToACy9A5oNcnHMI-XDA?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=lwUlrM"},
+
+      {label:"Neck body suit bartack", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EXMKw0_DKeJEom54FJW_CS0BFvkToACy9A5oNcnHMI-XDA?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=lwUlrM"},
+
+      {label:"Strap bartack", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EXMKw0_DKeJEom54FJW_CS0BFvkToACy9A5oNcnHMI-XDA?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=lwUlrM"}
+    ] },
+
+  { id:7, name:"Coverseam 02 Needle", img:"https://5.imimg.com/data5/LN/VS/MY-38887973/flat-lock-sewing-machine-500x500.jpg", type:"ISO 406", spi:"16-18", needle:2, thread:4, bobbin:0, looper:1, cmThread:"8cm", sampleFront1:"https://tse3.mm.bing.net/th/id/OIP.EUwT735Z6_jsZHrUkXk7KQAAAA?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3", sampleFront2:"https://mellysews.com/wp-content/uploads/2022/07/Coverstitch-10-700x700.jpg", sampleBack1:"yyyy", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://i.postimg.cc/cC3FN4Tm/coverseam-2ndl.jpg", rpm:"4200", videos:[
+     {label:"Pocket hem attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EYz-XRG76yhMrg_yDbFMcucBWtE4a_tPZO1dV8Lsiduh5A?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=IFPbdc"},
+
+      {label:"shoulder outline ", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EYz-XRG76yhMrg_yDbFMcucBWtE4a_tPZO1dV8Lsiduh5A?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=IFPbdc"},
+
+    ] },
+
+  { id:8, name:"Coverseam 03 Needle", img:"https://tse3.mm.bing.net/th/id/OIP.R9dNabNmDxBz4XusXnVj2QAAAA?w=400&h=640&rs=1&pid=ImgDetMain&o=7&rm=3", type:"ISO 605", spi:"16-18", needle:3, thread:6, bobbin:0, looper:0, cmThread:"10cm", sampleFront1:"https://i0.wp.com/c3.staticflickr.com/8/7499/27974951282_5f32c720ec_o.jpg?resize=1140%2C531&ssl=1", sampleFront2:"https://via.placeholder.com/600x400?text=Front+2", sampleBack1:"https://tse3.mm.bing.net/th/id/OIP.4IC5GvGBLYA7DxxZDBBE6gAAAA?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://i.postimg.cc/jjCQbSS6/coverseam-3-ndl.jpg", rpm:"4200", videos:[
+       {label:"Boxer weast ban attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EcVOWM0DVZ5IoxNaG4f3tBABAPvVkJyzU36eYI1982COXw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=DfDII3"},
+
+      {label:"Boxer hem attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EcVOWM0DVZ5IoxNaG4f3tBABAPvVkJyzU36eYI1982COXw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=DfDII3"},
+
+      {label:"Leg elastic attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EYz-XRG76yhMrg_yDbFMcucBWtE4a_tPZO1dV8Lsiduh5A?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=IFPbdc"},
+
+ {label:"Leg hem attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EVM4-EX8c6pKgL6XzuIzwy8BKBmZDRhR8yg25PSqpZkFBw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=h68PQ4"},
+
+
+   {label:" attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EchFo6UcA3NKgMnboKOTp-YBu-xEjAaW_iqTLaePJyzyvg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=OnQZjA"},
+    ] },
+
+  { id:9, name:"Flatseam", img:"https://tse4.mm.bing.net/th/id/OIP.ugy8cuA2tNTby9ztGCYiBQHaFM?rs=1&pid=ImgDetMain&o=7&rm=3", type:"Quilting", spi:"6-8", needle:4, thread:6, bobbin:0, looper:2, cmThread:"6cm", sampleFront1:"https://tse2.mm.bing.net/th/id/OIP.SrfnoYUzjBrQXPb5a81gbgHaCo?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3", sampleFront2:"https://c4.staticflickr.com/8/7316/27999908651_c88b0bb609_o.jpg", sampleBack1:"yyyy", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://i.postimg.cc/xTkms4qn/flatseam.jpg", rpm:"5100", videos:[
+      {label:"Seam attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EWx5yM01QKhIiyVHAQLST5EBk1-da7lJo4ecC5IK2J_bQw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=Rwf5GU"}
+    ] },
+
+  { id:10, name:"SINGLE NEEDLE CHAIN", img:"https://tse1.mm.bing.net/th/id/OIP.NDlLlq-i53dc-1x54rhtvQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3", type:"Blindstitch", spi:"12,14", needle:1, thread:2, bobbin:1, looper:0, cmThread:"2.5cm", sampleFront1:"https://sewguide.com/wp-content/uploads/2018/02/chain-stitch-double-1.jpg", sampleFront2:"https://sewguide.com/wp-content/uploads/2018/02/chain-stitch.jpg", sampleBack1:"https://i.postimg.cc/pVq5qtJd/Screenshot-2025-11-21-095245.pngg", sampleBack2:"https://i.postimg.cc/fyhCCQ7N/Screenshot-2025-11-21-095252.png", backMachine:"https://cpimg.tistatic.com/04447181/b/4/Single-Needle-Chainstitch-Industrial-Sewing-Machine.jpg", rpm:"4300", videos:[
+      {label:"Front Stitch Demo", url:"https://www.youtube.com/watch?v=VIDEO1"}
+    ] },
+
+  { id:11, name:"DOUBLE NEEDLE CHAIN", img:"https://fucen-sewing.com/wp-content/uploads/2024/02/FC-3800-D.jpg", type:"Serging", spi:"12,14", needle:2, thread:2, bobbin:1, looper:1, cmThread:"1cm = 4 threads", sampleFront1:"https://th.bing.com/th/id/R.ede2852246e365150ecda4110008ee2d?rik=wpQWctt9Sugx1A&pid=ImgRaw&r=0", sampleFront2:"https://th.bing.com/th/id/R.c259ca0515ae4b9b95173ed63497284f?rik=KaWCFwKJiXI4mQ&pid=ImgRaw&r=0", sampleBack1:"yyyy", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://www.foxsew.com/photo/original_837a1ad2b0042a07a9890f2d23f4ae83/double-needle-chain-stitch-sewing-machine.jpg", rpm:"3100", videos:[
+      {label:"attach port 2", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/EXrrCKtV0dlMsjLNnDFf3iwBR2qGLxupikzt1RSBhTTZVg?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=rWyuxZ"}
+    ] },
+
+  { id:12, name:"BUTTON HOLE", img:"https://tse3.mm.bing.net/th/id/OIP.GozspqlREHTWlbtxScLovgAAAA?rs=1&pid=ImgDetMain&o=7&rm=3", type:"Coverhem", spi:"12-14", needle:1, thread:4, bobbin:0, looper:2, cmThread:"2.5cm", sampleFront1:"https://th.bing.com/th/id/R.2b9461612a27fbba60b440ea36a19aab?rik=%2bSrUq2aIIqs9eA&pid=ImgRaw&r=0", sampleFront2:"https://tse4.mm.bing.net/th/id/OIP.eSWtn-xT3yYcVYVDqfBCBwHaFj?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3", sampleBack1:"yyyy", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://www.topeaglesewing.com/uploads/202110513/tbh-580-electronic-eyelet-button-hole-machine44109111156.jpg", rpm:"1400", videos:[
+      {label:"Button attach", url:"https://massl-my.sharepoint.com/:v:/g/personal/rushelis_masholdings_com/ETZ3935XfttMurqcOODzTUwBAamTLFM7zKOQJ4F5U4jzDQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=XWftrr"}
+    ] },
+
+  { id:13, name:"COVER SEAMS WITH SPREADER TREAD", img:"https://tse3.mm.bing.net/th/id/OIP.rmJKmnSbBYaCY6o_PwxDmgHaG9?cb=12&rs=1&pid=ImgDetMain&o=7&rm=3", type:"Button Sew", spi:"8-10", needle:2, thread:2, bobbin:1, looper:1, cmThread:"1cm = 3 threads", sampleFront1:"https://via.placeholder.com/120x80?text=Front+13", sampleFront2:"https://via.placeholder.com/600x400?text=Front+2", sampleBack1:"https://via.placeholder.com/120x80?text=Back+13", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"", rpm:"4200", videos:[
+      {label:"Front Stitch Demo", url:"https://www.youtube.com/watch?v=VIDEO1"}
+    ] },
+
+  { id:14, name:"Blindstitch", img:"https://m.media-amazon.com/images/I/61oDxu205JL._AC_SL1200_.jpg", spi:"10-12", needle:1, thread:3, bobbin:0, looper:2, cmThread:"1cm = 4 threads", sampleFront1:"https://sewinginspo.com/wp-content/uploads/2024/06/What-Is-A-Blind-Stitch.jpeg", sampleFront2:"https://i0.wp.com/blog.treasurie.com/wp-content/uploads/blind-stitch-hem-8-1024x683.jpg", sampleBack1:"yyyy", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://www.sewessential.co.uk/media/catalog/product/cache/4711e82800248420583ec5d40b30e11f/s/u/success-blindstitch-machine.jpg", rpm:"2000", videos:[
+      {label:"Front Stitch Demo", url:"https://www.youtube.com/watch?v=VIDEO1"}
+    ] },
+
+  { id:15, name:"Mock Safety Stitch", img:"https://tse2.mm.bing.net/th/id/OIP.4yl_aXjNCz4bPH4Mj0-H2wHaHa?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3", type:"Seam Finisher", spi:"6-8", needle:2, thread:2, bobbin:0, looper:2, cmThread:"1cm = 3 threads", sampleFront1:"https://via.placeholder.com/600x400?text=Front+15", sampleFront2:"https://via.placeholder.com/600x400?text=Front+2", sampleBack1:"https://via.placeholder.com/120x80?text=Back+15", sampleBack2:"https://via.placeholder.com/600x400?text=Back+2", backMachine:"https://www.reylenferna.com/wp-content/uploads/2020/06/M932-70-5x5_D222-1536x1536.jpg", rpm:"-", videos:[
+      {label:"Front Stitch Demo", url:"https://www.youtube.com/watch?v=VIDEO1"}
+    ] },
+
+  { id:16, name:"Heat Seal", img:"https://th.bing.com/th/id/OIP.v0JCg22vLOk0tyj-5ZowxAHaHa?w=148&h=180&c=7&r=0&o=7&dpr=1.5&pid=1.7&rm=3", type:"Specialty", spi:"12-14", needle:1, thread:2, bobbin:1, looper:0, cmThread:"1cm = 4 threads", sampleFront1:"yyyy", sampleFront2:"yyyy", sampleBack1:"uuuuuu", sampleBack2:"yyyyy", backMachine:"https://th.bing.com/th/id/R.7ee0492910d0072802dfbbf787d74f10?rik=AsUPQZv3DxaUSA&riu=http%3a%2f%2fpennemblem.com%2fwp-content%2fuploads%2f2019%2f04%2fheat-seal-2.jpg&ehk=TM8vR0o3do9zCStfmqdNyQZM0B%2fW5aExbEFIQJsy0Gc%3d&risl=&pid=ImgRaw&r=0", rpm:"-", videos:[ 
+      {label:"Label Attach", url:"https://youtu.be/wi5s0g_gdUU?si=ocGPaPEVfyXRvxjD"}
+    ] }
+];
+
+/* ---- Navigation utilities ---- */
+function goHome(){
+  hideAllPages(); document.getElementById('homePage').classList.add('active');
+}
+function goToMachines(){
+  hideAllPages(); document.getElementById('machinePage').classList.add('active');
+}
+function showDetailById(id){
+  const m = machines.find(x=>x.id===id);
+  if(!m) return;
+  populateDetail(m);
+  hideAllPages(); document.getElementById('detailPage').classList.add('active');
+}
+function hideAllPages(){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+}
+
+/* ---- Populate grid ---- */
+function populateGrid(){
+  const grid = document.getElementById('machineGrid');
+  grid.innerHTML = '';
+  machines.forEach(m=>{
+    const card = document.createElement('div');
+    card.className = 'machine';
+    card.tabIndex = 0;
+    card.innerHTML = `
+      <img src="${m.img || 'https://via.placeholder.com/400x250?text=No+Image'}" alt="${escapeHtml(m.name)}">
+      <h3>${escapeHtml(m.name)}</h3>
+    `;
+    card.onclick = ()=> showDetailById(m.id);
+    card.onkeydown = (e)=>{ if(e.key==='Enter') showDetailById(m.id); };
+    grid.appendChild(card);
+  });
+}
+
+/* ---- Populate detail page ---- */
+function populateDetail(m){
+  document.getElementById('detailTitle').textContent = m.name;
+  document.getElementById('detailMainImg').src = m.img || '';
+  // Spec boxes (8 boxes exactly as sample)
+  const specBoxes = [
+    {label:'Type', value: m.type || '-'},
+    {label:'SPI', value: m.spi || '-'},
+    {label:'Needles', value: (m.needle!=null? m.needle : '-')},
+    {label:'Threads', value: (m.thread!=null? m.thread : '-')},
+    {label:'Bobbins', value: (m.bobbin!=null? m.bobbin : '-')},
+    {label:'Loopers', value: (m.looper!=null? m.looper : '-')},
+    {label:'RPM', value: m.rpm || '-'},
+    {label:'Threads per cm', value: m.cmThread || '-'}
+  ];
+  const specRoot = document.getElementById('specBoxes');
+  specRoot.innerHTML = '';
+  specBoxes.forEach(s=>{
+    const d = document.createElement('div');
+    d.className = 'box';
+    d.innerHTML = `<div style="font-size:13px;color:#666;margin-bottom:6px;font-weight:600">${escapeHtml(s.label)}</div><div>${escapeHtml(String(s.value))}</div>`;
+    specRoot.appendChild(d);
+  });
+
+  // Samples
+  document.getElementById('frontSample1').src = m.sampleFront1 || 'https://via.placeholder.com/600x400?text=Front+1';
+  document.getElementById('frontSample2').src = m.sampleFront2 || 'https://via.placeholder.com/600x400?text=Front+2';
+  document.getElementById('backSample1').src = m.sampleBack1 || 'https://via.placeholder.com/600x400?text=Back+1';
+  document.getElementById('backSample2').src = m.sampleBack2 || 'https://via.placeholder.com/600x400?text=Back+2';
+  document.getElementById('backMachineImg').src = m.backMachine || m.img || 'https://via.placeholder.com/300x200?text=Machine';
+
+  // Videos list
+  const vroot = document.getElementById('videoList');
+  vroot.innerHTML = '';
+  if(Array.isArray(m.videos) && m.videos.length){
+    m.videos.forEach(v=>{
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = v.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = v.label || 'Video';
+      li.appendChild(a);
+      vroot.appendChild(li);
+    });
+  } else {
+    vroot.innerHTML = '<li>No videos available</li>';
+  }
+}
+
+/* ---- Utilities ---- */
+function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+/* ---- Init ---- */
+populateGrid();
+
+/* start on Home page (already active) */
+/* Expose goToMachines for clicks */
+window.goToMachines = goToMachines;
+window.goHome = goHome;
+window.showDetailById = showDetailById;
+</script>
+</body>
+</html>
